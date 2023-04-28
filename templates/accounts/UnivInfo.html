@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>あなたの大学について教えてください</h1>
+<form method="POST">
+    {% csrf_token %}
+    <p>{{ form.univ_name.label_tag }} {{ form.univ_name }}</p>
+    <p>{{ form.faculty.label_tag }} {{ form.faculty }}</p>
+    <p>{{ form.major.label_tag }} {{ form.major }}</p>
+    <p>{{ form.campus.label_tag }} {{ form.campus }}</p>
+    <input type="submit" value="次へ">
+</form>
+{% endblock %}
