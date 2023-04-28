@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>何の目的のために使いますか？</h1>
+<form method="POST">
+    {% csrf_token %}
+    <p>{{ form.target.label_tag }} {{ form.target }}</p>
+    <input type="submit" value="次へ">
+</form>
+{% endblock %}

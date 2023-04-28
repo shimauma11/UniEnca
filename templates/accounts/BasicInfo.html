@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>あなたについてもう少し教えてください</h1>
+<form method="POST">
+    {% csrf_token %}
+    <p>{{ form.nickname.label_tag }} {{ form.nickname }}</p>
+    <p>{{ form.gender.label_tag }} {{ form.gender }}</p>
+    <p>{{ form.grade.label_tag }} {{ form.grade }}</p>
+    <p>{{ form.age.label_tag }} {{ form.age }}</p>
+    {% if form.errors %}
+    <ul class="errorlist">
+        {% for field in form %}
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <input type="submit" value="次へ">
+</form>
+{% endblock %}
