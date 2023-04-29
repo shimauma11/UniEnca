@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from .models import Profile
+from .models import Profile, Hobby
 
 User = get_user_model()
 
@@ -62,3 +62,12 @@ class TargetInfo02Form(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("second_target",)
+
+
+class CreateHobbyForm(forms.ModelForm):
+    class Meta:
+        model = Hobby
+        fields = (
+            "hobby_name",
+            "hobby_kind",
+        )

@@ -2,7 +2,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .models_sub import Gender, Grade, Target, Second_target, Day_of_week, Time
+from .models_sub import (
+    Gender,
+    Grade,
+    Target,
+    Second_target,
+    Day_of_week,
+    Time,
+    Hobby_kind,
+)
 
 
 class User(AbstractUser):
@@ -13,6 +21,16 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
+
+class Hobby(models.Model):
+    hobby_name = models.CharField(max_length=30, null=True, blank=True)
+    hobby_kind = models.IntegerField(
+        choices=Hobby_kind.choices, null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.hobby_name}"
 
 
 class Profile(models.Model):
@@ -42,6 +60,8 @@ class Profile(models.Model):
 
     profile_text = models.TextField(max_length=300, null=True, blank=True)
 
+    hobby = models.ManyToManyField(Hobby, related_name="profiles", blank=True)
+
     def __str__(self):
         return f"{self.nickname}'s profile"
 
@@ -57,4 +77,3 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.lesson_name}"
-

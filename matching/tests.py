@@ -51,7 +51,8 @@ class TestCreateLessonView(TestCase):
             "day_of_week": 1,
             "time": 1,
         }
-        self.client.post(self.url, data01)
+        self.client.post(self.url, 
+        data01)
         data02 = {
             "lesson_name": "testlesson",
             "day_of_week": 1,
