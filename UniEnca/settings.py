@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "accounts.apps.AccountsConfig",
+    "matching.apps.MatchingConfig",
 ]
 
 MIDDLEWARE = [
@@ -130,5 +131,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 LOGIN_URL = "accounts:login"
-LOGIN_REDIRECT_URL = "matching:temp"
+LOGIN_REDIRECT_URL = "matching:home"
 LOGOUT_REDIRECT_URL = "accounts:login"

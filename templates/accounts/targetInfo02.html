@@ -4,7 +4,7 @@
 <h1>より詳細に教えてください！</h1>
 <form method="POST">
     {% csrf_token %}
-    <p>{{ form.second_target.label_tag }} {{ form.second_target }}</p>
+    <p>より詳細に！求めているのはどっち？ {{ form.second_target }}</p>
     <input type="submit" value="終了">
 </form>
 {% else %}

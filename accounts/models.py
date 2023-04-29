@@ -10,19 +10,15 @@ class User(AbstractUser):
     followings = models.ManyToManyField(
         "self", related_name="followers", symmetrical=False, blank=True
     )
-    # ここに、reportとfavor,hobby,
 
-
-class Univ(models.Model):
-    univ_name = models.CharField("大学名", max_length=20)
-    faculty = models.CharField("学部名", max_length=20)
-    major = models.CharField("学科名", max_length=20)
-    campus = models.CharField("キャンパス名", max_length=20)
-    user = models.OneToOneField(User, related_name="univ", on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.username}"
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, related_name="profile", on_delete=models.CASCADE
+    )
     nickname = models.CharField(max_length=20, null=True, blank=True)
     gender = models.IntegerField(choices=Gender.choices, null=True, blank=True)
     grade = models.IntegerField(choices=Grade.choices, null=True, blank=True)
@@ -38,23 +34,27 @@ class Profile(models.Model):
     second_target = models.IntegerField(
         choices=Second_target.choices, null=True, blank=True
     )
+
+    univ_name = models.CharField("大学名", max_length=20, null=True, blank=True)
+    faculty = models.CharField("学部名", max_length=20, null=True, blank=True)
+    major = models.CharField("学科名", max_length=20, null=True, blank=True)
+    campus = models.CharField("キャンパス名", max_length=20, null=True, blank=True)
+
     profile_text = models.TextField(max_length=300, null=True, blank=True)
-    univ = models.ForeignKey(
-        Univ,
-        related_name="students",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
+
+    def __str__(self):
+        return f"{self.nickname}'s profile"
 
 
 class Lesson(models.Model):
-    student = models.ManyToManyField(User, related_name="lessons")
+    students = models.ManyToManyField(User, related_name="lessons")
     lesson_name = models.CharField("科目名", max_length=30)
     day_of_week = models.IntegerField(
         choices=Day_of_week.choices, null=True, blank=True
     )
     time = models.IntegerField(choices=Time.choices, null=True, blank=True)
-    univ = models.ForeignKey(
-        Univ, related_name="lessons", on_delete=models.CASCADE
-    )
+    univ_name = models.CharField("大学名", max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.lesson_name}"
+

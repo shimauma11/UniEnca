@@ -4,12 +4,21 @@ from django.contrib.auth import login, authenticate
 from django.views.generic import CreateView as UserCreateView
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.conf import settings
 
-from .models import Profile, Univ
-from .forms import LoginForm, BasicInfoForm, UnivInfoForm, TargetInfo01Form, TargetInfo02Form, SignupForm
+from .models import Profile
+from .forms import (
+    LoginForm,
+    BasicInfoForm,
+    UnivInfoForm,
+    TargetInfo01Form,
+    TargetInfo02Form,
+    SignupForm,
+)
+
 # Create your views here.
 
 User = get_user_model()
@@ -35,7 +44,7 @@ class UserLoginView(LoginView):
     form_class = LoginForm
 
 
-class BasicInfoView(View):
+class BasicInfoView(View, LoginRequiredMixin):
     model = Profile
     form_class = BasicInfoForm
     template_name = "accounts/BasicInfo.html"
@@ -55,8 +64,8 @@ class BasicInfoView(View):
         return render(request, self.template_name, {"form": form})
 
 
-class UnivInfoView(View):
-    model = Univ
+class UnivInfoView(View, LoginRequiredMixin):
+    model = Profile
     form_class = UnivInfoForm
     template_name = "accounts/UnivInfo.html"
 
@@ -65,17 +74,23 @@ class UnivInfoView(View):
         return render(request, self.template_name, {"form": form})
 
     def post(self, request):
+        user = self.request.user
         form = self.form_class(request.POST)
         if form.is_valid():
-            univ = form.save(commit=False)
-            user = self.request.user
-            univ.user = user
-            univ.save()
+            univ_name = form.cleaned_data["univ_name"]
+            faculty = form.cleaned_data["faculty"]
+            major = form.cleaned_data["major"]
+            campus = form.cleaned_data["campus"]
+            user.profile.univ_name = univ_name
+            user.profile.faculty = faculty
+            user.profile.major = major
+            user.profile.campus = campus
+            user.profile.save()
             return redirect("accounts:targetInfo01")
         return render(request, self.template_name, {"form": form})
 
 
-class TargetInfo01View(View):
+class TargetInfo01View(View, LoginRequiredMixin):
     model = Profile
     form_class = TargetInfo01Form
     template_name = "accounts/targetInfo01.html"
@@ -94,7 +109,7 @@ class TargetInfo01View(View):
         return render(request, self.template_name, {"form": form})
 
 
-class TargetInfo02View(View):
+class TargetInfo02View(View, LoginRequiredMixin):
     model = Profile
     form_class = TargetInfo02Form
     template_name = "accounts/targetInfo02.html"
@@ -109,5 +124,5 @@ class TargetInfo02View(View):
         if form.is_valid():
             user.profile.second_target = form.cleaned_data["second_target"]
             user.profile.save()
-            return redirect("accounts:login")
+            return redirect(settings.LOGIN_REDIRECT_URL)
         return render(request, self.template_name, {"form": form})

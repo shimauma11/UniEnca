@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from .models import Profile, Univ
+from .models import Profile
 
 User = get_user_model()
 
@@ -32,19 +32,18 @@ class BasicInfoForm(forms.ModelForm):
             "grade",
             "age",
         )
-    
+
     def clean(self):
         cleaned_data = super().clean()
         age = cleaned_data.get("age")
-        
+
         if age < 18 or 120 < age:
             raise ValidationError("18歳から120歳の間で入力してください")
 
 
-
 class UnivInfoForm(forms.ModelForm):
     class Meta:
-        model = Univ
+        model = Profile
         fields = (
             "univ_name",
             "faculty",
@@ -52,18 +51,14 @@ class UnivInfoForm(forms.ModelForm):
             "campus",
         )
 
-    
+
 class TargetInfo01Form(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = (
-            "target",
-        )
+        fields = ("target",)
 
 
 class TargetInfo02Form(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = (
-            "second_target",
-        )
+        fields = ("second_target",)
