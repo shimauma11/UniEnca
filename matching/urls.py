@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import TempView
+from .views import HomeView, CreateLessonView
 
 app_name = "matching"
 urlpatterns = [
-    path("", TempView, name="temp"),
+    path("", HomeView.as_view(), name="home"),
+    path("createLesson/", CreateLessonView.as_view(), name="createLesson"),
 ]
