@@ -42,3 +42,9 @@ class Time(models.IntegerChoices):
     time5 = 5, "5限"
     time6 = 6, "6限"
     time7 = 7, "7限"
+
+
+class Hobby_kind(models.IntegerChoices):
+    indoor = 0, "インドア"
+    outdoor = 1, "アウトドア"
+    another = 2, "その他" 

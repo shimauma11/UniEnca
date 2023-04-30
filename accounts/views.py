@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth import login, authenticate
 from django.views.generic import CreateView as UserCreateView
@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.conf import settings
 
-from .models import Profile
+from .models import Profile, Hobby
 from .forms import (
     LoginForm,
     BasicInfoForm,
@@ -17,6 +17,7 @@ from .forms import (
     TargetInfo01Form,
     TargetInfo02Form,
     SignupForm,
+    CreateHobbyForm,
 )
 
 # Create your views here.
@@ -124,5 +125,29 @@ class TargetInfo02View(View, LoginRequiredMixin):
         if form.is_valid():
             user.profile.second_target = form.cleaned_data["second_target"]
             user.profile.save()
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        return render(request, self.template_name, {"form": form})
+
+
+class CreateHobbyView(View, LoginRequiredMixin):
+    model = Hobby
+    form_class = CreateHobbyForm
+    template_name = "accounts/createHobby.html"
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request):
+        user = self.request.user
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            hobby_name = form.cleaned_data["hobby_name"]
+            target_hobby = Hobby.objects.filter(hobby_name=hobby_name)
+            if not target_hobby.exists():
+                hobby = form.save()
+                user.profile.hobby.add(hobby)
+            hobby = get_object_or_404(Hobby, hobby_name=hobby_name)
+            user.profile.hobby.add(hobby)
             return redirect(settings.LOGIN_REDIRECT_URL)
         return render(request, self.template_name, {"form": form})

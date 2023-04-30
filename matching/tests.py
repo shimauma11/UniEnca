@@ -45,19 +45,14 @@ class TestCreateLessonView(TestCase):
             1,
         )
 
-    def test_success_post_with_exist_lesson(self):
-        data01 = {
+    def test_success_post_with_existing_lesson(self):
+        data = {
             "lesson_name": "testlesson",
             "day_of_week": 1,
             "time": 1,
         }
-        self.client.post(self.url, data01)
-        data02 = {
-            "lesson_name": "testlesson",
-            "day_of_week": 1,
-            "time": 1,
-        }
-        response = self.client.post(self.url, data02)
+        self.client.post(self.url, data)
+        response = self.client.post(self.url, data)
         self.assertRedirects(
             response,
             reverse("matching:home"),
@@ -71,3 +66,5 @@ class TestCreateLessonView(TestCase):
             ).count(),
             1,
         )
+
+

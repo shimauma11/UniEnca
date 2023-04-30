@@ -2,4 +2,5 @@
 {% block content %}
 <h1>ようこそ{{ user.username }}さん🎉</h1>
 <a href="{% url 'matching:createLesson' %}">探したいクラスを入力</a>
+<a href="{% url 'accounts:createHobby' %}">趣味入力</a>
 {% endblock %}

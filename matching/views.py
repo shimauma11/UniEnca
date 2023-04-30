@@ -38,12 +38,9 @@ class CreateLessonView(View, LoginRequiredMixin):
                 lesson.save()
                 lesson.students.add(user)
                 form.save_m2m()
-                return redirect("matching:home")
-
             this_lesson = get_object_or_404(
                 Lesson, lesson_name=lesson_name, univ_name=univ_name
             )
             this_lesson.students.add(user)
             return redirect("matching:home")
-
         return render(request, self.template_name, {"form": form})
