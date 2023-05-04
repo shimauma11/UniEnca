@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <h1>あなたについてもう少し教えてください</h1>
 <form method="POST">
@@ -7,6 +8,8 @@
     <p>{{ form.gender.label_tag }} {{ form.gender }}</p>
     <p>{{ form.grade.label_tag }} {{ form.grade }}</p>
     <p>{{ form.age.label_tag }} {{ form.age }}</p>
+    <p>プロフィールに載せる自己紹介文を書いてください！
+    <p>{{ form.profile_text }}</p>
     {% if form.errors %}
     <ul class="errorlist">
         {% for field in form %}

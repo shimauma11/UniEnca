@@ -4,15 +4,16 @@
 {% include "_nav.html" %}
 {% endblock %}
 {% block content %}
-<div class="createLesson">
-    <h1>まずは、探したい授業を入力してください！</h1>
+<div class="createFavor">
+    <h1>この授業ではどのような人と出会いたいですか？</h1>
     <form method="POST">
         {% csrf_token %}
-        <p>科目名 {{ form.lesson_name }}</p>
-        <p>曜日   {{ form.day_of_week }}</p>
-        <p>時限   {{ form.time }}</p>
+        <p>性別 {{ form.gender }}</p>
+        <p>学年 {{ form.grade }}</p>
+        <p>年齢 {{ form.age }}</p>
+        <p>人数 {{ form.num_of_people }}</p>
         <button type="submit" class="btn btn-unienca btn-next float-end">
-            次へ
+            探す
         </button>
     </form>
     {% if form.errors %}

@@ -1,6 +1,19 @@
 {% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
 {% block content %}
-<h1>ようこそ{{ user.username }}さん🎉</h1>
-<a href="{% url 'matching:createLesson' %}">探したいクラスを入力</a>
-<a href="{% url 'accounts:createHobby' %}">趣味入力</a>
+<div class="home">
+    <h1>ようこそ{{ user.username }}さん🎉</h1>
+    <p>Searchボタンを押すと、あなたと同じ授業をとっている学生を探すことができます!</p>
+    <div class="d-flex justify-content-center">
+        <a href="{% url 'matching:createLesson' %}">
+            <button class="btn btn-unienca btn-search">
+                Search
+            </button>
+        </a>
+    </div>
+</div>
+
 {% endblock %}

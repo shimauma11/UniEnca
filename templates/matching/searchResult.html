@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<h1>{{ this_search.lesson.lesson_name }}</h1>
+{% if list_count == 0 %}
+<p>まだこの授業を探している人はいないようです</p>
+{% else %}
+<p>{{ list_count }}件見つかりました。</p>
+{% for search in searchList %}
+<div class="search-box">
+    <div class="search-username">
+        <p>{{ search.user.username}}</p>
+    </div>
+    <div class="profile-text">
+        <p>{{ search.user.profile.profile_text }}</p>
+    </div>
+    <div class="other-funcs">
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<div class="d-flex justify-content-center">
+    <a href="{% url 'matching:deleteSearch' this_search.pk %}">
+        <button class="btn btn-unienca btn-delete float-">
+            募集を削除する
+        </button>
+    </a>
+</div>
+<div class="d-flex justify-content-center">
+    <a href="{% url 'matching:home' %}">
+        <button class="btn btn-unienca btn-continue float-end">
+            このまま募集した状態にする
+        </button>
+    </a>
+</div>
+{% endblock %}
