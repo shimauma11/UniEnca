@@ -1,9 +1,19 @@
 from django.urls import path
-from .views import UserLoginView, BasicInfoView, UnivInfoView, TargetInfo01View, TargetInfo02View, SignupView, CreateHobbyView
+from .views import (
+    UserLoginView,
+    BasicInfoView,
+    UnivInfoView,
+    TargetInfo01View,
+    TargetInfo02View,
+    SignupView,
+    CreateHobbyView,
+    WelcomeView,
+)
 
 app_name = "accounts"
 urlpatterns = [
-    path("", UserLoginView.as_view(), name="login"),
+    path("", WelcomeView.as_view(), name="welcome"),
+    path("login/", UserLoginView.as_view(), name="login"),
     path("signup/", SignupView.as_view(), name="signup"),
     path("basicInfo/", BasicInfoView.as_view(), name="basicInfo"),
     path("univInfo/", UnivInfoView.as_view(), name="univInfo"),

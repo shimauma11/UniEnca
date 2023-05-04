@@ -31,6 +31,7 @@ class BasicInfoForm(forms.ModelForm):
             "gender",
             "grade",
             "age",
+            "profile_text",
         )
 
     def clean(self):

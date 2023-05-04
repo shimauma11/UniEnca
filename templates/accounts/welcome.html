@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light nav-original">
+    <div class="container-fluid nav-original">
+        <a class="navbar-brand logo" href="">UniEnca</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="intro">
+    <h1>ようこそUniEncaへ🎉</h1>
+    <p>このサイトでは、大学で同じ授業を受ける人を探すことができます。
+        大学での出会いは、基本的にサークルで完結してしまいますが、
+        UniEncaを使って、授業でも出会いを増やしましょう。
+    </p>
+
+    <p>
+        またUniEncaでは、あなたの希望(年齢や学年、性別)や趣味や性格
+        から導き出されるあなたとの類似率を元に、より効率的な出会いを
+        実現します。
+    </p>
+    <p>
+        まずは、サインアップをすることから始めましょう！
+    </p>
+    <div class="d-flex justify-content-center">
+        <a href="{% url 'accounts:signup' %}">
+            <button type="button" class="btn btn-unienca btn-signup">
+                サインアップ
+            </button>
+        </a>
+    </div>
+    <div class="d-flex justify-content-center">
+        <a href="{% url 'accounts:login' %}">
+        <button type="button" class="btn btn-unienca btn-login">
+            ログイン
+        </button>
+        </a>
+    </div>
+    <p class="guide-login">ログインはこちら</p>
+</div>
+
+{% endblock %}

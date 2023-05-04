@@ -1,0 +1,68 @@
+/* 共通部分　*/
+a {
+    text-decoration: none;
+}
+
+.nav-original a {
+    color: white !important;
+}
+
+.dropdown-original {
+    color: black;
+}
+
+.background {
+    min-height: 100vh;
+    width: 100%;
+}
+
+.container-original {
+    overflow: auto;
+}
+
+.nav-original {
+    width: 100% !important;
+}
+
+.main-container {
+    margin: 50px auto 0px auto;
+    width: 70%;
+}
+
+.nav-original {
+    background-color: rgb(100, 253, 120) !important;
+}
+
+.btn-unienca {
+    background-color: rgb(100, 253, 120) !important;
+    color: white !important;
+}
+
+.btn-unienca:hover {
+    background-color: rgb(165, 255, 177) !important;
+}
+
+.btn-login {
+    width: 400px;
+}
+
+/* welcome.html */
+
+.intro p {
+    text-align: center;
+}
+
+.intro h1 {
+    text-align: center;
+    margin: 0px 0px 50px 0px;
+}
+
+.btn-signup {
+    margin: 50px auto 50px auto !important;
+    width: 400px;
+}
+
+.guide-login {
+    margin-top: 5px;
+    font-size: 12px;
+}

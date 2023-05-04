@@ -4,11 +4,11 @@
 {% include "_nav.html" %}
 {% endblock %}
 {% block content %}
-<h1>趣味</h1>
 <form method="POST">
     {% csrf_token %}
-    <p>趣味の名称 {{ form.hobby_name }}</p>
-    <p>趣味の種類 {{ form.hobby_kind }}</p>
-    <input type="submit" value="次へ">
+    <h1>本当に削除しますか</h1>
+    <button type="submit" class="btn btn-delete btn-unienca">
+        削除する
+    </button>
 </form>
 {% endblock %}

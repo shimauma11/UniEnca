@@ -25,6 +25,14 @@ from .forms import (
 User = get_user_model()
 
 
+class WelcomeView(View):
+    template_name = "accounts/welcome.html"
+
+    def get(self, request):
+        ctxt = {}
+        return render(request, self.template_name, ctxt)
+
+
 class SignupView(UserCreateView):
     model = User
     template_name = "accounts/signup.html"
