@@ -51,7 +51,7 @@ form {
     border: 1px solid gray;
     border-radius: 5px;
     overflow: auto;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .search-username{
@@ -60,7 +60,7 @@ form {
     line-height: 40px;
 }
 
-.profile-text {
+.search-profile-text{
     padding: 5px 30px;
 }
 

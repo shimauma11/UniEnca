@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light nav-original">
     <div class="container-fluid"> 
-        <a class="navbar-brand logo" href="">UniEnca</a>
+        <a class="navbar-brand logo" href="{% url 'matching:home' %}">UniEnca</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -13,7 +13,7 @@
                         {{ user.username }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item dropdown-original" href="">プロフィール</a></li>
+                        <li><a class="dropdown-item dropdown-original" href="{% url 'accounts:myProfile' %}">プロフィール</a></li>
                         <li><a class="dropdown-item dropdown-original" href="">サーチ</a></li>
                     </ul>
                 </li>

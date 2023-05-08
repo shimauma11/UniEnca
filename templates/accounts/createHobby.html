@@ -4,11 +4,15 @@
 {% include "_nav.html" %}
 {% endblock %}
 {% block content %}
-<h1>趣味</h1>
+<h1>趣味の追加</h1>
 <form method="POST">
     {% csrf_token %}
     <p>趣味の名称 {{ form.hobby_name }}</p>
     <p>趣味の種類 {{ form.hobby_kind }}</p>
-    <input type="submit" value="次へ">
+    <a href="{% url 'accounts:createHobby' %}">
+        <button type="submit" class="btn btn-unienca">
+            追加
+        </button>
+    </a>
 </form>
 {% endblock %}

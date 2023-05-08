@@ -12,9 +12,11 @@
 {% for search in searchList %}
 <div class="search-box">
     <div class="search-username">
-        <p>{{ search.user.username}}</p>
+        <a class="target_user" href="{% url 'accounts:profile' search.user.id search.id %}">
+            {{ search.user.username }}
+        </a>
     </div>
-    <div class="profile-text">
+    <div class="search-profile-text">
         <p>{{ search.user.profile.profile_text }}</p>
     </div>
     <div class="other-funcs">
