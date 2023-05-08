@@ -66,3 +66,104 @@ a {
     margin-top: 5px;
     font-size: 12px;
 }
+
+/* profile.html */
+.profile-box {
+    padding: 50px 0px 50px 30px;
+    margin: 0 auto;
+    border-top: 1px solid grey;
+}
+
+.target_user{
+    color : black;
+}
+
+.target_user:hover{
+    color: rgb(97, 97, 97);
+}
+
+.profile-userinfo{
+    margin-top: 50px;
+}
+
+.profile-text{
+    padding-right: 30px;
+    margin-bottom: 100px;
+}
+
+.profile-label{
+    height: 50px;
+    line-height: 50px;
+    width: 150px;
+}
+
+.profile-info{
+    min-height: 50px;
+    line-height: 50px;
+    padding-left: 30px;
+    border-bottom: 1px solid grey;
+    width: 100%;
+}
+
+.profile-item-hobby {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.hobby-box {
+    max-width: 100%;
+    height: 50px;
+    min-width: 100px;
+    border: 1px solid gray;
+    border-radius: 30px;
+    margin: 0 20px 20px 0;
+    padding: 0px 20px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.profile-hobby{
+    border-bottom: 1px solid grey;
+}
+
+.btn-profile-return{
+    margin: 100px 0 200px 0;
+    width: 200px;
+    height: 50px;
+}
+
+.see-search-box{
+    margin: 100px auto 200px auto;
+}
+
+.btn-see-search{
+    height: 50px;
+    border-radius: 30px;
+}
+
+.see-search-h1{
+    margin: 50px auto 50px auto;
+}
+
+.favor-label {
+    height: 50px;
+    line-height: 50px;
+    width: 150px;
+    text-align: center;
+}
+
+.favor-info {
+    min-height: 50px;
+    line-height: 50px;
+    padding-left: 30px;
+    border-bottom: 1px solid grey;
+    width: 100%;
+}
+
+.search-box{
+    padding: 20px 30px;
+}
+
+.see-search-lesson{
+    font-size: 20px;
+}

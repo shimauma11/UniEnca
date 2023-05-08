@@ -1,12 +1,13 @@
+from typing import Any, Dict, Optional
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth import login, authenticate
-from django.views.generic import CreateView as UserCreateView
+from django.views.generic import CreateView as UserCreateView, DetailView
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.conf import settings
 
 from .models import Profile, Hobby
@@ -151,11 +152,43 @@ class CreateHobbyView(View, LoginRequiredMixin):
         form = self.form_class(request.POST)
         if form.is_valid():
             hobby_name = form.cleaned_data["hobby_name"]
-            target_hobby = Hobby.objects.filter(hobby_name=hobby_name)
-            if not target_hobby.exists():
-                hobby = form.save()
-                user.profile.hobby.add(hobby)
-            hobby = get_object_or_404(Hobby, hobby_name=hobby_name)
+            hobby_kind = form.cleaned_data["hobby_kind"]
+            hobby, created = Hobby.objects.get_or_create(
+                hobby_name=hobby_name, hobby_kind=hobby_kind
+            )
             user.profile.hobby.add(hobby)
-            return redirect(settings.LOGIN_REDIRECT_URL)
+            user.profile.save()
+            return redirect("accounts:myProfile")
         return render(request, self.template_name, {"form": form})
+
+
+class ProfileView(View, LoginRequiredMixin):
+    model = User
+    template_name = "accounts/profile.html"
+
+    def get(self, request, user_id, search_id):
+        user = get_object_or_404(User, pk=user_id)
+        ctxt = {
+            "target_user": user,
+            "search_id": search_id,
+        }
+        return render(request, self.template_name, ctxt)
+
+
+class MyProfileView(View, LoginRequiredMixin):
+    model = User
+    template_name = "accounts/myProfile.html"
+
+    def get(self, request):
+        ctxt = {
+            "target_user": self.request.user,
+        }
+        return render(request, self.template_name, ctxt)
+
+
+class SeeSearchView(View, LoginRequiredMixin):
+    template_name = "accounts/seeSearch.html"
+
+    def get(self, request):
+        ctxt = {}
+        return render(request, self.template_name, ctxt)

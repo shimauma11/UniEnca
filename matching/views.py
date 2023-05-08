@@ -61,7 +61,7 @@ class CreateLessonView(View, LoginRequiredMixin):
         return render(request, self.template_name, {"form": form})
 
 
-# Favorインスタンスを作成。このインスタンスを持つSearchインスタンスが削除された際に、このFavorも削除される。
+# すでに同じFavorインスタンスがある場合もFavorを作成。削除の際、Favorの重複を許さないと、複数のSearchが消えてしまうため
 class CreateFavorView(View, LoginRequiredMixin):
     model = Favor
     form_class = CreateFavorForm
@@ -76,21 +76,10 @@ class CreateFavorView(View, LoginRequiredMixin):
         form = self.form_class(request.POST)
         if form.is_valid():
             favor = form.save(commit=False)
-            gender = form.cleaned_data["gender"]
-            age = form.cleaned_data["age"]
-            grade = form.cleaned_data["grade"]
-            num_of_people = form.cleaned_data["num_of_people"]
             target = user.profile.target
             second_target = user.profile.target
-            favor, created = Favor.objects.get_or_create(
-                gender=gender,
-                age=age,
-                grade=grade,
-                num_of_people=num_of_people,
-                target=target,
-                second_target=second_target,
-                user=user,
-            )
+            favor.user = user
+            favor.save()
             favor_id = favor.id
             url = reverse(
                 "matching:createSearch",
@@ -142,30 +131,18 @@ class SearchView(View, LoginRequiredMixin):
         )
         count = list_count(result)
         ctxt = {
-                "searchList": result,
-                "list_count": count,
-                "this_search": this_search,
-            }
+            "searchList": result,
+            "list_count": count,
+            "this_search": this_search,
+        }
         return render(request, self.template_name, ctxt)
 
 
-class DeleteSearchView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Search
-    success_url = reverse_lazy("matching:home")
+# ホームにリダイレクトされる
+class DeleteSearchView(DeleteView, LoginRequiredMixin):
+    model = Favor
+    success_url = reverse_lazy("accounts:seeSearch")
     template_name = "matching/deleteSearch.html"
-
-    def test_func(self):
-        self.object = self.get_object()
-        return self.request.user == self.object.user
-
-    def handle_no_permission(self):
-        return HttpResponseForbidden("You aren't allowed to do this action.")
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        self.object.delete()
-        return HttpResponseRedirect(success_url)
 
 
 """

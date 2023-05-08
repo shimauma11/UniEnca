@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<h1>アカウント情報</h1>
+<div class="profile-userinfo profile-box">
+    <div class="profile-item d-flex">
+        <p class="profile-label">名前</p>
+        <p class="profile-info">{{ target_user.username }}</p>
+    </div>
+    <div class="profile-item d-flex">
+        <p class="profile-label">ニックネーム</p>
+        <p class="profile-info">{{ target_user.profile.nickname }}</p>
+    </div>
+    {% if target_user.profile.gender == 0 %}
+    <div class="profile-item d-flex">
+        <p class="profile-label">性別</p>
+        <p class="profile-info">男性</p>
+    </div>
+    {% elif target_user.profile.gender == 1 %}
+    <div class="profile-item d-flex">
+        <p class="profile-label">性別</p>
+        <p class="profile-info">女性</p>
+    </div>
+    {% else %}
+    <div class="profile-item d-flex">
+        <p class="profile-label">性別</p>
+        <p class="profile-info">その他</p>
+    </div>
+    {% endif %}
+    <div class="profile-item d-flex">
+        <p class="profile-label">年齢</p>
+        <p class="profile-info">{{ target_user.profile.age }}歳</p>
+    </div>
+    <div class="profile-item d-flex">
+        <p class="profile-label">学年</p>
+        <p class="profile-info">{{ target_user.profile.grade }}年生</p>
+    </div>
+</div>
+<div class="profile-univinfo profile-box">
+    <div class="profile-item d-flex">
+        <p class="profile-label">大学名</p>
+        <p class="profile-info">{{ target_user.profile.univ_name }}</p>
+    </div>
+    <div class="profile-item d-flex">
+        <p class="profile-label">学部</p>
+        <p class="profile-info">{{ target_user.profile.faculty }}</p>
+    </div>
+    <div class="profile-item d-flex">
+        <p class="profile-label">学科</p>
+        <p class="profile-info">{{ target_user.profile.major }}</p>
+    </div>
+    <div class="profile-item d-flex">
+        <p class="profile-label">キャンパス</p>
+        <p class="profile-info">{{ target_user.profile.campus }}</p>
+    </div>
+</div>
+<div class="profile-text profile-box">
+    <div class="profile-item d-flex">
+        <p class="profile-label">自己紹介</p>
+        <p class="profile-info">{{ target_user.profile.profile_text }}</p>
+    </div>
+</div>
+<div class="profile-hobby profile-box d-flex">
+    <p class="profile-label">趣味</p>
+    <div class="profile-item profile-item-hobby">
+        {% for hobby in target_user.profile.hobby.all %}
+        <div class="hobby-box">
+            <p>{{ hobby.hobby_name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<a href="{% url 'matching:search' search_id %}">
+    <button class="btn btn-unienca btn-profile-return float-end">
+        戻る
+    </button>
+</a>
+{% endblock %}

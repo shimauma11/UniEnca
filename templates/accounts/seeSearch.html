@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<h1 class="see-search-h1">
+    {{ user.username }}さんが出した募集一覧
+</h1>
+<div class="see-search-box">
+    {% for search in user.searches.all %}
+    <div class="search-box">
+        <div class="search-username">
+            <p class="see-search-lesson">
+                {{ search.lesson.lesson_name }}
+            </p>
+        </div>
+        <div class="search-favor">
+            <div class="favor-item d-flex">
+                <p class="favor-label">性別</p>
+                {% if search.favor.gender == None %}
+                <p class="favor-info">選択なし</p>
+                {% elif search.favor.gender == 0 %}
+                <p class="favor-info">男性</p>
+                {% elif search.favor.gender == 1 %}
+                <p class="favor-info">女性</p>
+                {% elif search.favor.gender == 2 %}
+                <p class="favor-info">その他</p>
+                {% elif search.favor.gender == 3 %}
+                <p class="favor-info">こだわりなし</p>
+                {% endif %}
+            </div>
+            <div class="favor-item d-flex">
+                <p class="favor-label">年齢</p>
+                {% if search.favor.gender == None %}
+                <p class="favor-info">選択なし</p>
+                {% elif search.favor.age == "upper" %}
+                <p class="favor-info">自分より年上</p>
+                {% elif search.favor.age == "same" %}
+                <p class="favor-info">自分と同い年</p>
+                {% elif search.favor.age == "lower" %}
+                <p class="favor-info">自分より年下</p>
+                {% else %}
+                <p class="favor-info">こだわりなし</p>
+                {% endif %}
+            </div>
+            <div class="favor-item d-flex">
+                <p class="favor-label">学年</p>
+                {% if search.favor.grade == None %}
+                <p class="favor-info">選択なし</p>
+                {% else %}
+                <p class="favor-info">{{ search.favor.grade }}年生</p>
+                {% endif %}
+            </div>
+            <div class="favor-item d-flex">
+                <p class="favor-label">人数</p>
+                {% if search.favor.num_of_people == None %}
+                <p class="favor-info">選択なし</p>
+                {% else %}
+                <p class="favor-info">{{ search.favor.num_of_people }}人</p>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{% url 'matching:deleteSearch' search.favor.pk  %}">
+            <button class="btn btn-unienca btn-delete float-end">
+                削除
+            </button>
+        </a>
+    </div>
+    {% endfor %}
+    <a href="{% url 'accounts:myProfile' %}">
+        <button class="btn btn-unienca btn-profile-return float-end">
+            戻る
+        </button>
+    </a>
+</div>
+{% endblock %}
