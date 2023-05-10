@@ -20,6 +20,11 @@
         <p>{{ search.user.profile.profile_text }}</p>
     </div>
     <div class="other-funcs">
+        {% if search.room %}
+        <a href="{% url 'dm:joinRoom' search.id this_search.id %}">トークルームに加わる</a>
+        {% else %}
+        <a href="{% url 'dm:createRoom' search.id this_search.id %}">トークルームを作成</a>
+        {% endif %}
     </div>
 </div>
 {% endfor %}

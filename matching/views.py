@@ -76,10 +76,23 @@ class CreateFavorView(View, LoginRequiredMixin):
         form = self.form_class(request.POST)
         if form.is_valid():
             favor = form.save(commit=False)
+            # すでに同じfavorがあるかどうかをチェックするための情報
+            gender = form.cleaned_data["gender"]
+            grade = form.cleaned_data["grade"]
+            age = form.cleaned_data["age"]
+            num_of_people = form.cleaned_data["num_of_people"]
             target = user.profile.target
             second_target = user.profile.target
-            favor.user = user
-            favor.save()
+
+            favor, created = Favor.objects.get_or_create(
+                user=user,
+                gender=gender,
+                grade=grade,
+                age=age,
+                num_of_people=num_of_people,
+                target=target,
+                second_target=second_target,
+            )
             favor_id = favor.id
             url = reverse(
                 "matching:createSearch",

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts.apps.AccountsConfig",
     "matching.apps.MatchingConfig",
+    "dm.apps.DmConfig",
 ]
 
 MIDDLEWARE = [

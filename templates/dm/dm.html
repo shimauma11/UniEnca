@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="dm-container">
+    <a href="{% url 'dm:leaveRoom' this_search.id %}">
+        退出
+    </a>
+</div>
+<div class="dm-content">
+    {% for message in messages %}
+    <p>{{ message.sender }}</p>
+    <p>{{ message.body }} {{ message.time }}</p>
+    {% endfor %}
+</div>
+<div class="send-message-container">
+    <form method=POST>
+        {% csrf_token %}
+        メッセージ {{ form.body }}
+        <button type="submit" class="btn btn-unienca">
+            送信
+        </button>
+    </form>
+</div>
+</div>
+{% endblock %}
