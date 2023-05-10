@@ -1,13 +1,22 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from accounts.models import Lesson
 
 User = get_user_model()
 
 
 class Room(models.Model):
     members = models.ManyToManyField(User, related_name="rooms")
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name="rooms",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=False,
+    )
     max_num = models.IntegerField(null=False, blank=False)
+    can_join = models.BooleanField(default=True)
 
 
 class Message(models.Model):

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="createRoom">
+    <h1>トークルームの最大人数を教えてください</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <p>最大人数 {{ form.max_num }}</p>
+        <button type="submit" class="btn btn-unienca btn-next float-end">
+            作成
+        </button>
+    </form>
+    {% if form.errors %}
+    <ul class="errorlist">
+        {% for field in form %}
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

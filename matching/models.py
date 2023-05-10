@@ -5,6 +5,8 @@ from accounts.models_sub import Target, Second_target
 from .models_sub import Gender, Grade
 from django.contrib.auth import get_user_model
 
+from dm.models import Room
+
 # Create your models here.
 
 User = get_user_model()
@@ -54,7 +56,13 @@ class Search(models.Model):
         Lesson, related_name="searches", on_delete=models.CASCADE, unique=False
     )
     favor = models.ForeignKey(
-        Favor, related_name="searches", on_delete=models.CASCADE
+        Favor, related_name="searches", on_delete=models.PROTECT
+    )
+    room = models.ForeignKey(
+        Room,
+        related_name="searches",
+        on_delete=models.CASCADE,
+        null=True,
     )
 
     def __str__(self):

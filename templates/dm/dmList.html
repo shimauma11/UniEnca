@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav %}
+{% include "_nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="dm-list-container">
+    {% for search in user.searches.all %}
+    {% if search.room %}
+    <a href="{% url 'dm:dm' search.id %}">{{ search.room.lesson.lesson_name }}</a>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
