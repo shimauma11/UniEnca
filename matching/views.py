@@ -278,13 +278,10 @@ def judger(you, recruit_favor):
 
 # roomの男女比,学年比率, 平均年齢などの情報を持つroom_infoを作る関数。
 def createRoomInfo(recruit):
-    # 比率と平均の計算に必要な数字
+    # 比率の計算に必要な数字
     roomMembers = recruit.room.members
     allMembers = roomMembers.count()
     members_info = createMemberInfo(members=roomMembers)
-    sum_age = 0
-    for member in roomMembers.all():
-        sum_age += member.profile.age
 
     # それぞれの比率
     male_ratio = members_info["maleMember"] / allMembers * 100
@@ -294,7 +291,6 @@ def createRoomInfo(recruit):
     grade2_ratio = members_info["grade2Member"] / allMembers * 100
     grade3_ratio = members_info["grade3Member"] / allMembers * 100
     grade4_ratio = members_info["grade4Member"] / allMembers * 100
-    averageAge = sum_age / allMembers
 
     # 性別、学年それぞれの中で最も割合が大きいものを探す
     max_gender = max(male_ratio, female_ratio, other_gender_ratio)
@@ -326,7 +322,6 @@ def createRoomInfo(recruit):
         "grade2_ratio": grade2_ratio,
         "grade3_ratio": grade3_ratio,
         "grade4_ratio": grade4_ratio,
-        "averageAge": averageAge,
         "gender": gender,
         "grade": grade,
     }
