@@ -7,3 +7,9 @@ build/
 media/
 staticfiles/
 .env
+*~
+/.vscode
+venv
+db.sqlite3
+.DS_Store
+
