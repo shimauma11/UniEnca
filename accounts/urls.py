@@ -13,6 +13,7 @@ from .views import (
     SeeRecruitView,
     BasicInfoEditView,
     UnivInfoEditView,
+    ProfileTextEditView,
 )
 
 app_name = "accounts"
@@ -52,7 +53,7 @@ urlpatterns = [
     ),
     path(
         "profileTextEdit/<int:profile_id>/",
-        BasicInfoEditView.as_view(),
+        ProfileTextEditView.as_view(),
         name="profileTextEdit",
     ),
 ]
