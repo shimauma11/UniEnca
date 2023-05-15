@@ -5,15 +5,20 @@ from .views import (
     CreateFavorView,
     CreateSearchView,
     SearchView,
-    DeleteSearchView,
+    CreateRecruitView,
+    DeleteFavorView,
 )
 
 app_name = "matching"
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("createLesson/", CreateLessonView.as_view(), name="createLesson"),
     path(
-        "createFavor/<int:lesson_id>/",
+        "createLesson/<str:path>/",
+        CreateLessonView.as_view(),
+        name="createLesson",
+    ),
+    path(
+        "createFavor/<int:lesson_id>/<str:path>/",
         CreateFavorView.as_view(),
         name="createFavor",
     ),
@@ -24,8 +29,9 @@ urlpatterns = [
     ),
     path("search/<int:search_id>/", SearchView.as_view(), name="search"),
     path(
-        "deleteSearch/<int:pk>/",
-        DeleteSearchView.as_view(),
-        name="deleteSearch",
+        "createRecruit/<int:lesson_id>/<int:favor_id>/",
+        CreateRecruitView.as_view(),
+        name="createRecruit",
     ),
+    path("delete/<int:pk>/", DeleteFavorView.as_view(), name="delete"),
 ]

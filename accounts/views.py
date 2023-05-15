@@ -1,10 +1,8 @@
-from typing import Any, Dict, Optional
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth import login, authenticate
-from django.views.generic import CreateView as UserCreateView, DetailView
-from django.views.generic.edit import CreateView
-from django.contrib.auth.views import LoginView
+from django.views.generic import CreateView as UserCreateView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy, reverse
@@ -16,9 +14,11 @@ from .forms import (
     BasicInfoForm,
     UnivInfoForm,
     TargetInfo01Form,
-    TargetInfo02Form,
     SignupForm,
     CreateHobbyForm,
+    BasicInfoEditForm,
+    UnivInfoEditForm,
+    ProfileTextEditForm,
 )
 
 # Create your views here.
@@ -54,10 +54,14 @@ class UserLoginView(LoginView):
     form_class = LoginForm
 
 
+class UserLogoutView(LogoutView):
+    pass
+
+
 class BasicInfoView(View, LoginRequiredMixin):
     model = Profile
     form_class = BasicInfoForm
-    template_name = "accounts/BasicInfo.html"
+    template_name = "accounts/basicInfo.html"
 
     def get(self, request):
         form = self.form_class()
@@ -77,7 +81,7 @@ class BasicInfoView(View, LoginRequiredMixin):
 class UnivInfoView(View, LoginRequiredMixin):
     model = Profile
     form_class = UnivInfoForm
-    template_name = "accounts/UnivInfo.html"
+    template_name = "accounts/univInfo.html"
 
     def get(self, request):
         form = self.form_class()
@@ -114,25 +118,6 @@ class TargetInfo01View(View, LoginRequiredMixin):
         form = self.form_class(request.POST)
         if form.is_valid():
             user.profile.target = form.cleaned_data["target"]
-            user.profile.save()
-            return redirect("accounts:targetInfo02")
-        return render(request, self.template_name, {"form": form})
-
-
-class TargetInfo02View(View, LoginRequiredMixin):
-    model = Profile
-    form_class = TargetInfo02Form
-    template_name = "accounts/targetInfo02.html"
-
-    def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
-
-    def post(self, request):
-        user = self.request.user
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            user.profile.second_target = form.cleaned_data["second_target"]
             user.profile.save()
             return redirect(settings.LOGIN_REDIRECT_URL)
         return render(request, self.template_name, {"form": form})
@@ -186,9 +171,99 @@ class MyProfileView(View, LoginRequiredMixin):
         return render(request, self.template_name, ctxt)
 
 
-class SeeSearchView(View, LoginRequiredMixin):
-    template_name = "accounts/seeSearch.html"
+class SeeRecruitView(View, LoginRequiredMixin):
+    template_name = "accounts/seeRecruit.html"
 
     def get(self, request):
         ctxt = {}
         return render(request, self.template_name, ctxt)
+
+
+class BasicInfoEditView(View, LoginRequiredMixin, UserPassesTestMixin):
+    template_name = "accounts/basicInfoEdit.html"
+    form_class = BasicInfoEditForm
+
+    def get(self, request, profile_id):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, profile_id):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            profile = get_object_or_404(Profile, pk=profile_id)
+            nickname = form.cleaned_data["nickname"]
+            gender = form.cleaned_data["gender"]
+            grade = form.cleaned_data["grade"]
+            age = form.cleaned_data["age"]
+            profile.nickname = nickname
+            profile.gender = gender
+            profile.grade = grade
+            profile.age = age
+            profile.save()
+            return redirect("accounts:myProfile")
+        return render(request, self.template_name, {"form": form})
+
+    def test_func(self):
+        user = self.request.user
+        return user == self.get_object().user
+
+    def get_object(self):
+        return self.request.user.profile
+
+
+class UnivInfoEditView(View, LoginRequiredMixin, UserPassesTestMixin):
+    template_name = "accounts/univInfoEdit.html"
+    form_class = UnivInfoEditForm
+
+    def get(self, request, profile_id):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, profile_id):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            profile = get_object_or_404(Profile, pk=profile_id)
+            univ_name = form.cleaned_data["univ_name"]
+            faculty = form.cleaned_data["faculty"]
+            major = form.cleaned_data["major"]
+            campus = form.cleaned_data["campus"]
+            profile.univ_name = univ_name
+            profile.faculty = faculty
+            profile.major = major
+            profile.campus = campus
+            profile.save()
+            return redirect("accounts:myProfile")
+        return render(request, self.template_name, {"form": form})
+
+    def test_func(self):
+        user = self.request.user
+        return user == self.get_object().user
+
+    def get_object(self):
+        return self.request.user.profile
+
+
+class ProfileTextEditView(View, LoginRequiredMixin, UserPassesTestMixin):
+    template_name = "accounts/profileTextEdit.html"
+    form_class = ProfileTextEditForm
+
+    def get(self, request, profile_id):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, profile_id):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            profile = get_object_or_404(Profile, pk=profile_id)
+            profile_text = form.cleaned_data["profile_text"]
+            profile.profile_text = profile_text
+            profile.save()
+            return redirect("accounts:myProfile")
+        return render(request, self.template_name, {"form": form})
+
+    def test_func(self):
+        user = self.request.user
+        return user == self.get_object().user
+
+    def get_object(self):
+        return self.request.user.profile

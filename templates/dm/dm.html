@@ -1,28 +1,58 @@
 {% extends "base.html" %}
 {% load static %}
 {% block nav %}
-{% include "_nav.html" %}
+{% include "_nav_dm.html" %}
 {% endblock %}
 {% block content %}
-<div class="dm-container">
-    <a href="{% url 'dm:leaveRoom' this_search.id %}">
-        退出
-    </a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6" style="height: 500px; overflow-y: scroll;">
+            <!-- 左側のコンテンツ -->
+            <div style="overflow-x: auto; height: 100vh;">
+                {% for message in room.messages.all %}
+                {% if message.sender == user %}
+                <div class="message-container d-flex justify-content-end">
+                    <div class="message-box">
+                        <p>{{ message.sender }} {{ message.time }}</p>
+                        <div class="message-text">
+                            {{ message.body }}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="message-container d-flex">
+                    <div class="message-box">
+                        <p>{{ message.sender }} {{ message.time }}</p>
+                        <div class="message-text">
+                            {{ message.body }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6" style="height: 300px;">
+            <div class="dm-header d-flex justify-content-end">
+                <a href="{% url 'dm:dmList' %}">
+                    <button class="btn btn-unienca">
+                        戻る
+                    </button>
+                </a>
+            </div>
+            <!-- 右側のコンテンツ -->
+            <form method="POST">
+                {% csrf_token %}
+                <p>
+                    {{ form.body }}
+                </p>
+                <div>
+                <button type="submit" class="btn btn-unienca">
+                    送信
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
-<div class="dm-content">
-    {% for message in messages %}
-    <p>{{ message.sender }}</p>
-    <p>{{ message.body }} {{ message.time }}</p>
-    {% endfor %}
-</div>
-<div class="send-message-container">
-    <form method=POST>
-        {% csrf_token %}
-        メッセージ {{ form.body }}
-        <button type="submit" class="btn btn-unienca">
-            送信
-        </button>
-    </form>
-</div>
-</div>
+
 {% endblock %}

@@ -6,7 +6,6 @@ from .models_sub import (
     Gender,
     Grade,
     Target,
-    Second_target,
     Day_of_week,
     Time,
     Hobby_kind,
@@ -62,10 +61,6 @@ class Profile(models.Model):
         blank=True,
     )
     target = models.IntegerField(choices=Target.choices, null=True, blank=True)
-    second_target = models.IntegerField(
-        choices=Second_target.choices, null=True, blank=True
-    )
-
     univ_name = models.CharField("大学名", max_length=20, null=True, blank=True)
     faculty = models.CharField("学部名", max_length=20, null=True, blank=True)
     major = models.CharField("学科名", max_length=20, null=True, blank=True)

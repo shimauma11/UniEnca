@@ -5,10 +5,18 @@
 {% endblock %}
 {% block content %}
 <div class="dm-list-container">
-    {% for search in user.searches.all %}
-    {% if search.room %}
-    <a href="{% url 'dm:dm' search.id %}">{{ search.room.lesson.lesson_name }}</a>
-    {% endif %}
+    <div class="dm-list-header d-flex justify-content-between">
+        <h1>トークルーム</h1>
+        <a href="{% url 'matching:home' %}">
+            <button class="btn btn-unienca btn-header-return">
+                戻る
+            </button>
+        </a>
+    </div>
+    {% for room in user.rooms.all %}
+    <div class="dm-list">
+       <p><a href="{% url 'dm:dm' room.id %}">{{ room.name }} ({{ room.members.count }})</a></p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}

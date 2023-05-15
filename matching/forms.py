@@ -20,5 +20,4 @@ class CreateFavorForm(forms.ModelForm):
             "gender",
             "grade",
             "age",
-            "num_of_people",
         )

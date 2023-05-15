@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h1>あなたについてもう少し教えてください</h1>
+<form method="POST">
+    {% csrf_token %}
+    <p>自己紹介の編集内容を入力してください</p>
+    <p>{{ form.profile_text }}</p>
+    {% if form.errors %}
+    <ul class="errorlist">
+        {% for field in form %}
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <input type="submit" value="保存">
+</form>
+{% endblock %}
