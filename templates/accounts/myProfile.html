@@ -6,7 +6,7 @@
 {% block content %}
 <div class="d-flex justify-content-between">
     <h1>アカウント情報</h1>
-    <a href="{% url 'accounts:seeSearch' %}">
+    <a href="{% url 'accounts:seeRecruit' %}">
         <button type="button" class="btn btn-unienca btn-see-search">
             自分の募集を見る
         </button>
@@ -49,7 +49,15 @@
         <p class="profile-label">学年</p>
         <p class="profile-info">{{ target_user.profile.grade }}年生</p>
     </div>
+    <div class="profile-item d-flex justify-content-end">
+        <a href="{% url 'accounts:basicInfoEdit' target_user.profile.id %}">
+            <button class="btn btn-unienca btn-edit">
+                編集
+            </button>
+        </a>
+    </div>
 </div>
+
 <div class="profile-univinfo profile-box">
     <div class="profile-item d-flex">
         <p class="profile-label">大学名</p>
@@ -67,13 +75,29 @@
         <p class="profile-label">キャンパス</p>
         <p class="profile-info">{{ target_user.profile.campus }}</p>
     </div>
+    <div class="profile-item d-flex justify-content-end">
+        <a href="{% url 'accounts:univInfoEdit' target_user.profile.id %}">
+            <button class="btn btn-unienca btn-edit">
+                編集
+            </button>
+        </a>
+    </div>
 </div>
+
 <div class="profile-text profile-box">
     <div class="profile-item d-flex">
         <p class="profile-label">自己紹介</p>
         <p class="profile-info">{{ target_user.profile.profile_text }}</p>
     </div>
+    <div class="profile-item d-flex justify-content-end">
+        <a href="{% url 'accounts:profileTextEdit' target_user.profile.id %}">
+            <button class="btn btn-unienca btn-edit">
+                編集
+            </button>
+        </a>
+    </div>
 </div>
+
 <div class="profile-hobby profile-box d-flex">
     <p class="profile-label">趣味</p>
     <div class="profile-item profile-item-hobby">
@@ -83,17 +107,21 @@
         </div>
         {% endfor %}
     </div>
-    <p>
-        <a href="{% url 'accounts:createHobby' %}">
-            <button class="btn btn-unienca btn-profile-return float-end">
-                趣味を追加
-            </button>
-        </a>
-    </p>
 </div>
-<a href="{% url 'matching:home' %}">
-    <button class="btn btn-unienca btn-profile-return float-end">
-        戻る
-    </button>
-</a>
+
+<div class="add-hobby-container d-flex justify-content-end">
+    <a href="{% url 'accounts:createHobby' %}">
+        <button class="btn btn-unienca btn-hobby">
+            趣味を追加
+        </button>
+    </a>
+</div>
+
+<div class="retun-btn-containe d-flex justify-content-end">
+    <a href="{% url 'matching:home' %}">
+        <button class="btn btn-unienca btn-profile-return">
+            戻る
+        </button>
+    </a>
+</div>
 {% endblock %}

@@ -1,3 +1,9 @@
+.dropdown-menu {
+    position: absolute !important;
+    z-index: 1000 !important;
+    /* 他の要素よりも大きい値を設定 */
+}
+
 .btn-search {
     width: 400px;
     height: 100px;
@@ -64,6 +70,71 @@ form {
     padding: 5px 30px;
 }
 
+.members-dropdown{
+    padding: 5px 30px;
+}
+
+.members_box{
+    margin-left: 20px;
+}
+
+.members-dropdown a{
+    color: black
+}
+
+.members-dropdown a:hover{
+    color: black
+}
+
 .other-funcs {
     padding: 5px 30px;
+}
+
+.btn-join{
+    width: 100px;
+    border-radius: 50px;
+}
+
+/* dm.cssが効かないので一度こっちに書く　*/
+.message-text{
+    width: 200px;
+    min-height: 50px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: aquamarine;
+}
+
+.message-box{
+    margin-top: 10px;
+}
+
+.message-box p{
+    font-size: 5px;
+    margin-left: 10px;
+}
+
+.dm-list{
+    width: 80%;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid grey;
+    margin: 10px auto;
+
+}
+
+.dm-list a{
+    color: black;
+}
+
+.dm-list-container{
+    margin-bottom: 100px;
+}
+
+.dm-list-container h1{
+    margin-bottom: 100px;
+}
+
+.btn-header-return{
+    width: 100px;
+    border-radius: 50px;
 }

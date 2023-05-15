@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.shortcuts import get_object_or_404
 from accounts.models import Lesson, Profile
 from .models import Favor, Search
 
@@ -10,16 +11,31 @@ from django.urls import reverse
 User = get_user_model()
 
 
-class TestCreateLessonView(TestCase):
+class TestHomeView(TestCase):
     def setUp(self):
-        self.url = reverse("matching:createLesson")
-        user01 = User.objects.create_user(
+        self.user01 = User.objects.create_user(
             username="testuser01",
             email="testemail01@example.com",
             password="testpassword01",
         )
-        Profile.objects.create(user=user01, univ_name="testuniv")
         self.client.login(username="testuser01", password="testpassword01")
+        self.url = reverse("matching:home")
+
+    def test_success_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestCreateLessonView(TestCase):
+    def setUp(self):
+        self.user01 = User.objects.create_user(
+            username="testuser01",
+            email="testemail01@example.com",
+            password="testpassword01",
+        )
+        Profile.objects.create(user=self.user01, univ_name="testuniv")
+        self.client.login(username="testuser01", password="testpassword01")
+        self.url = reverse("matching:createLesson", kwargs={"path": "recruit"})
 
     def test_success_get(self):
         response = self.client.get(self.url)
@@ -32,9 +48,13 @@ class TestCreateLessonView(TestCase):
             "time": 1,
         }
         response = self.client.post(self.url, data)
+        lesson = get_object_or_404(Lesson, lesson_name="testlesson")
         self.assertRedirects(
             response,
-            reverse("matching:home"),
+            reverse(
+                "matching:createFavor",
+                kwargs={"lesson_id": lesson.id, "path": "recruit"},
+            ),
             status_code=302,
             target_status_code=200,
         )
@@ -54,9 +74,13 @@ class TestCreateLessonView(TestCase):
         }
         self.client.post(self.url, data)
         response = self.client.post(self.url, data)
+        lesson = get_object_or_404(Lesson, lesson_name="testlesson")
         self.assertRedirects(
             response,
-            reverse("matching:home"),
+            reverse(
+                "matching:createFavor",
+                kwargs={"lesson_id": lesson.id, "path": "recruit"},
+            ),
             status_code=302,
             target_status_code=200,
         )
@@ -68,7 +92,85 @@ class TestCreateLessonView(TestCase):
             1,
         )
 
-'''
+
+class TestCreateFavorView(TestCase):
+    def setUp(self):
+        self.user01 = User.objects.create_user(
+            username="testuser01",
+            email="testemail01@example.com",
+            password="testpassword01",
+        )
+        self.profile01 = Profile.objects.create(
+            user=self.user01,
+            target=0,
+        )
+        self.lesson = Lesson.objects.create(
+            univ_name="testuniv",
+            lesson_name="testlesson",
+            day_of_week=1,
+            time=1,
+        )
+        self.client.login(username="testuser01", password="testpassword01")
+        self.url = reverse(
+            "matching:createFavor",
+            kwargs={"lesson_id": self.lesson.id, "path": "recruit"},
+        )
+
+    def test_success_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_success_post(self):
+        data = {
+            "gender": 0,
+            "grade": 1,
+            "age": 20,
+            "user": self.user01, 
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(Favor.objects.count(), 1)
+
+
+class TestCreateSearchView(TestCase):
+    def setUp(self):
+        self.user01 = User.objects.create_user(
+            username="testuser01",
+            email="testemail01@example.com",
+            password="testpassword01",
+        )
+        self.lesson = Lesson.objects.create(
+            univ_name="testuniv",
+            lesson_name="testlesson",
+            day_of_week=1,
+            time=1,
+        )
+        self.favor = Favor.objects.create(
+            user=self.user01,
+            gender=0,
+            grade=1,
+            age=20,
+            target=0,
+        )
+        self.client.login(username="testuser01", password="testpassword01")
+        self.url = reverse(
+            "matching:createSearch",
+            kwargs={"lesson_id": self.lesson.id, "favor_id": self.favor.id},
+        )
+
+    def test_success_get(self):
+        response = self.client.get(self.url)
+        search = get_object_or_404(Search, lesson=self.lesson, favor=self.favor)
+        self.assertRedirects(
+            response,
+            reverse("matching:search", kwargs={"search_id": search.id}),
+            status_code=302,
+            target_status_code=200,
+        )
+        
+
+        
+
+"""
 class TestSearchView(TestCase):
     def setUp(self):
         user01 = User.objects.create_user(
@@ -143,4 +245,4 @@ class TestSearchView(TestCase):
         self.assertEqual(response.status_code, 200)
         
 
-'''
+"""

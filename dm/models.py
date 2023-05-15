@@ -7,16 +7,11 @@ User = get_user_model()
 
 
 class Room(models.Model):
+    name = models.CharField(max_length=100, null=False, blank=False)
     members = models.ManyToManyField(User, related_name="rooms")
-    lesson = models.ForeignKey(
-        Lesson,
-        related_name="rooms",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=False,
-    )
     max_num = models.IntegerField(null=False, blank=False)
     can_join = models.BooleanField(default=True)
+    introduction = models.TextField(max_length=400, null=True, blank=True)
 
 
 class Message(models.Model):

@@ -59,12 +59,6 @@ class TargetInfo01Form(forms.ModelForm):
         fields = ("target",)
 
 
-class TargetInfo02Form(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ("second_target",)
-
-
 class CreateHobbyForm(forms.ModelForm):
     class Meta:
         model = Hobby
@@ -72,3 +66,31 @@ class CreateHobbyForm(forms.ModelForm):
             "hobby_name",
             "hobby_kind",
         )
+
+
+class BasicInfoEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = (
+            "nickname",
+            "gender",
+            "grade",
+            "age",
+        )
+
+
+class UnivInfoEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = (
+            "univ_name",
+            "faculty",
+            "major",
+            "campus",
+        )
+
+
+class ProfileTextEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ("profile_text",)

@@ -19,11 +19,6 @@ class Target(models.IntegerChoices):
     for_credit = 1, "単位取得のため"
 
 
-class Second_target(models.IntegerChoices):
-    like_you = 0, "あなたと似ている人"
-    not_like_you = 1, "あなたと似ていない人"
-
-
 class Day_of_week(models.IntegerChoices):
     sun = 0, "日"
     mon = 1, "月"
@@ -47,4 +42,4 @@ class Time(models.IntegerChoices):
 class Hobby_kind(models.IntegerChoices):
     indoor = 0, "インドア"
     outdoor = 1, "アウトドア"
-    another = 2, "その他" 
+    another = 2, "その他"

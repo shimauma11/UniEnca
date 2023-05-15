@@ -9,8 +9,10 @@ from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 
 from accounts.models import Lesson
-from .models import Favor, Search
+from .models import Favor, Search, Recruit
+from dm.models import Room
 from .forms import CreateLessonForm, CreateFavorForm
+from dm.forms import RoomEditForm
 
 # Create your views here.
 User = get_user_model()
@@ -26,11 +28,11 @@ class CreateLessonView(View, LoginRequiredMixin):
     form_class = CreateLessonForm
     template_name = "matching/createLesson.html"
 
-    def get(self, request):
+    def get(self, request, path):
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
-    def post(self, request):
+    def post(self, request, path):
         user = self.request.user
         univ_name = user.profile.univ_name
         form = self.form_class(request.POST)
@@ -44,18 +46,21 @@ class CreateLessonView(View, LoginRequiredMixin):
                 lesson = form.save(commit=False)
                 lesson.univ_name = univ_name
                 lesson.save()
-                lesson.students.add(user)
-                form.save_m2m()
+                if path == "recruit":
+                    lesson.students.add(user)
+                    form.save_m2m()
                 lesson_id = lesson.id
             # すでにこのLessonインスタンスがある場合は、this_lessonとして再利用。
             this_lesson = get_object_or_404(
                 Lesson, lesson_name=lesson_name, univ_name=univ_name
             )
             lesson_id = this_lesson.id
-            this_lesson.students.add(user)
+            if path == "recruit":
+                this_lesson.students.add(user)
             # CreateFavorViewでもこのLessonインスタンスを使うため、lesson_idを渡す。
             url = reverse(
-                "matching:createFavor", kwargs={"lesson_id": lesson_id}
+                "matching:createFavor",
+                kwargs={"lesson_id": lesson_id, "path": path},
             )
             return redirect(url)
         return render(request, self.template_name, {"form": form})
@@ -67,11 +72,11 @@ class CreateFavorView(View, LoginRequiredMixin):
     form_class = CreateFavorForm
     template_name = "matching/createFavor.html"
 
-    def get(self, request, lesson_id):
+    def get(self, request, lesson_id, path):
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
-    def post(self, request, lesson_id):
+    def post(self, request, lesson_id, path):
         user = self.request.user
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -80,24 +85,26 @@ class CreateFavorView(View, LoginRequiredMixin):
             gender = form.cleaned_data["gender"]
             grade = form.cleaned_data["grade"]
             age = form.cleaned_data["age"]
-            num_of_people = form.cleaned_data["num_of_people"]
             target = user.profile.target
-            second_target = user.profile.target
 
             favor, created = Favor.objects.get_or_create(
                 user=user,
                 gender=gender,
                 grade=grade,
                 age=age,
-                num_of_people=num_of_people,
                 target=target,
-                second_target=second_target,
             )
             favor_id = favor.id
-            url = reverse(
-                "matching:createSearch",
-                kwargs={"lesson_id": lesson_id, "favor_id": favor_id},
-            )
+            if path == "search":
+                url = reverse(
+                    "matching:createSearch",
+                    kwargs={"lesson_id": lesson_id, "favor_id": favor_id},
+                )
+            else:
+                url = reverse(
+                    "matching:createRecruit",
+                    kwargs={"lesson_id": lesson_id, "favor_id": favor_id},
+                )
             return redirect(url)
         return render(request, self.template_name, {"form": form})
 
@@ -122,7 +129,7 @@ class CreateSearchView(View, LoginRequiredMixin):
 
 # search_listには、ログインユーザが作成したlessonインスタンスと同じインスタンスを持つSearchインスタンスのリストを入れる
 class SearchView(View, LoginRequiredMixin):
-    model = Search
+    model = Recruit
     template_name = "matching/searchResult.html"
 
     def get(self, request, search_id):
@@ -130,32 +137,61 @@ class SearchView(View, LoginRequiredMixin):
         this_search = get_object_or_404(Search, id=search_id)
         lesson = this_search.lesson
         favor = this_search.favor
-        search_list = lesson.searches.all()
-        ctxt = {}
-        if not search_list:
+        recruit_list = list(lesson.recruites.filter(room__can_join=True))
+        # lessonが1つもrecruitを持っていない場合
+        if not recruit_list:
             ctxt = {
-                "searchList": search_list,
+                "recruitList": recruit_list,
                 "list_count": 0,
-                "this_search": this_search,
+                "this_search": this_search,  # 必要か後でチェック
             }
             return render(request, self.template_name, ctxt)
-        result = narrowDown(
-            search_list=search_list, favor=favor, request_user=user
+        # lessonがrecruitを持っている時。favorを元にさらにrecruitを絞る
+        recruit_list = narrowDown(
+            recruit_list=recruit_list, user_favor=favor, request_user=user
         )
-        count = list_count(result)
+        # 要修正
+        count = len(recruit_list)
         ctxt = {
-            "searchList": result,
+            "recruitList": recruit_list,
             "list_count": count,
             "this_search": this_search,
         }
         return render(request, self.template_name, ctxt)
 
 
+class CreateRecruitView(View, LoginRequiredMixin):
+    model = Room
+    form_class = RoomEditForm
+    template_name = "matching/createRecruit.html"
+
+    def get(self, request, lesson_id, favor_id):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    # room作成と同時にrecruitを作成。roomのメンバーにログインユーザーを追加する。
+    def post(self, request, lesson_id, favor_id):
+        user = self.request.user
+        lesson = get_object_or_404(Lesson, pk=lesson_id)
+        favor = get_object_or_404(Favor, pk=favor_id)
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            room = form.save()
+            room.members.add(user)
+            room.save()
+            recruit, created = Recruit.objects.get_or_create(
+                user=user, lesson=lesson, favor=favor, room=room
+            )
+            url = reverse("dm:dm", kwargs={"room_id": room.id})
+            return redirect(url)
+        return render(request, self.template_name, {"form": form})
+
+
 # ホームにリダイレクトされる
-class DeleteSearchView(DeleteView, LoginRequiredMixin):
+class DeleteFavorView(DeleteView, LoginRequiredMixin):
     model = Favor
-    success_url = reverse_lazy("accounts:seeSearch")
-    template_name = "matching/deleteSearch.html"
+    success_url = reverse_lazy("matching:home")
+    template_name = "matching/delete.html"
 
 
 """
@@ -166,73 +202,164 @@ SearchView内で、lessonが同じSearchインスタンスのリストを受け�
 """
 
 
-def narrowDown(search_list, favor, request_user):
+def narrowDown(recruit_list, user_favor, request_user):
     result = []
     you = request_user.profile  # youはログインユーザ
-    for search in search_list:
-        partner = search.user.profile
-        if search.user == request_user:  # 検索した時に自分のSearchも表示する必要がないため、この処理を行う
+    for recruit in recruit_list:
+        room_info = createRoomInfo(recruit)
+        # userのプロファイルとマッチしているrecruitのみを表示する
+        recruit_favor = recruit.favor
+        if (
+            request_user in recruit.room.members.all()
+        ):  # 自分自身がすでに参加しているrecruitは表示する必要がないため
             continue
-        # ログインユーザのfavorとpartnerのprofileの照合
-        is_matched = judger(you=you, favor=favor, partner=partner)
-        if is_matched:
-            # partnerのfavorとログインユーザのprofileの照合
-            if judger(you=partner, favor=search.favor, partner=you):
-                # 双方一致したSearchインスタンスはresultに入れる
-                result.append(search)
+        # recruitのFavorがrequest_userのprofileとマッチしているかを見る
+        if judger(you=you, recruit_favor=recruit_favor):
+            # かつ、検索しているuserのfavor.genderとfavor.gradeが、room_infoのgender,gradeとマッチしているかをチェック
+            if user_favor.gender == 3:
+                judge_gender = True
+            else:
+                judge_gender = room_info["gender"] == user_favor.gender
+
+            if user_favor.grade == 5:
+                judge_grade = True
+            else:
+                judge_grade = room_info["grade"] == user_favor.grade
+
+            judge_target = user_favor.target == recruit_favor.target
+
+            if judge_gender and judge_grade and judge_target:
+                # マッチしているものはresultに入れて返す
+                result.append(recruit)
     return result
 
 
 # 以下は、年齢、学年、性別の希望が一致しているか確かめるための関数。bool値で返す。
-def judgeAge(you, partner, favor):
-    if favor.age == "upper":
-        if you.age < partner.age:
+def judgeAge(you, recruit_favor):
+    if recruit_favor.age == "upper":
+        if you.age < recruit_favor.age:
             return True
 
-    if favor.age == "same":
-        if you.age == partner.age:
+    if recruit_favor.age == "same":
+        if you.age == recruit_favor.age:
             return True
 
-    if favor.age == "lower":
-        if you.age > partner.age:
+    if recruit_favor.age == "lower":
+        if you.age > recruit_favor.age:
             return True
 
-    if favor.age == "whatever":
+    if recruit_favor.age == "whatever":
         return True
 
 
-def judgeGrade(partner, favor):
-    if favor.grade == 5:
+def judgeGrade(you, recruit_favor):
+    if recruit_favor.grade == 5:
         return True
-    return favor.grade == partner.grade
+    return recruit_favor.grade == you.grade
 
 
-def judgeGender(partner, favor):
-    if favor.gender == 3:
+def judgeGender(you, recruit_favor):
+    if recruit_favor.gender == 3:
         return True
-    return favor.gender == partner.gender
+    return recruit_favor.gender == you.gender
 
 
 # 全ての情報が一致しているかを確かめる関数。bool値で返す
-def judger(you, partner, favor):
-    result_age = judgeAge(you=you, partner=partner, favor=favor)
-    result_grade = judgeGrade(partner=partner, favor=favor)
-    result_gender = judgeGender(partner=partner, favor=favor)
-    result_target = you.target == partner.target
-    result_second_target = you.second_target == partner.second_target
-    if (
-        result_age
-        and result_grade
-        and result_gender
-        and result_target
-        and result_second_target
-    ):
+def judger(you, recruit_favor):
+    result_age = judgeAge(you, recruit_favor)
+    result_grade = judgeGrade(you, recruit_favor)
+    result_gender = judgeGender(you, recruit_favor)
+    result_target = you.target == recruit_favor.target
+    # favor全てマッチしていたらTrueを返す。違ったらFalseを返す。
+    if result_age and result_grade and result_gender and result_target:
         return True
     return False
 
 
-def list_count(search_list):
-    count = 0
-    for search in search_list:
-        count += 1
-    return count
+# roomの男女比,学年比率, 平均年齢などの情報を持つroom_infoを作る関数。
+def createRoomInfo(recruit):
+    # 比率と平均の計算に必要な数字
+    roomMembers = recruit.room.members
+    allMembers = roomMembers.count()
+    members_info = createMemberInfo(members=roomMembers)
+    sum_age = 0
+    for member in roomMembers.all():
+        sum_age += member.profile.age
+
+    # それぞれの比率
+    male_ratio = members_info["maleMember"] / allMembers * 100
+    female_ratio = members_info["femaleMember"] / allMembers * 100
+    other_gender_ratio = members_info["otherGenderMember"] / allMembers * 100
+    grade1_ratio = members_info["grade1Member"] / allMembers * 100
+    grade2_ratio = members_info["grade2Member"] / allMembers * 100
+    grade3_ratio = members_info["grade3Member"] / allMembers * 100
+    grade4_ratio = members_info["grade4Member"] / allMembers * 100
+    averageAge = sum_age / allMembers
+
+    # 性別、学年それぞれの中で最も割合が大きいものを探す
+    max_gender = max(male_ratio, female_ratio, other_gender_ratio)
+
+    if max_gender == male_ratio:
+        gender = 0
+    elif max_gender == female_ratio:
+        gender = 1
+    else:
+        gender = 2
+    print(gender)
+
+    max_grade = max(grade1_ratio, grade2_ratio, grade3_ratio, grade4_ratio)
+
+    if max_grade == grade1_ratio:
+        grade = 1
+    elif max_grade == grade2_ratio:
+        grade = 2
+    elif max_grade == grade3_ratio:
+        grade = 3
+    else:
+        grade = 4
+
+    room_info = {
+        "male_ratio": male_ratio,
+        "female_ratio": female_ratio,
+        "otherGenderMember": other_gender_ratio,
+        "grade1_ratio": grade1_ratio,
+        "grade2_ratio": grade2_ratio,
+        "grade3_ratio": grade3_ratio,
+        "grade4_ratio": grade4_ratio,
+        "averageAge": averageAge,
+        "gender": gender,
+        "grade": grade,
+    }
+    return room_info
+
+
+# room member比率計算に必要な数字を返す
+def createMemberInfo(members):
+    members_info = {
+        "maleMember": 0,
+        "femaleMember": 0,
+        "otherGenderMember": 0,
+        "grade1Member": 0,
+        "grade2Member": 0,
+        "grade3Member": 0,
+        "grade4Member": 0,
+    }
+    for member in members.all():
+        member = member.profile
+
+        if member.gender == 0:
+            members_info["maleMember"] += 1
+        if member.gender == 1:
+            members_info["femaleMember"] += 1
+        else:
+            members_info["otherGenderMember"] += 1
+
+        if member.grade == 0:
+            members_info["grade1Member"] += 1
+        if member.grade == 1:
+            members_info["grade2Member"] += 1
+        if member.grade == 2:
+            members_info["grade3Member"] += 1
+        else:
+            members_info["grade4Member"] += 1
+    return members_info

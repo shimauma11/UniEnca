@@ -9,37 +9,47 @@
 <p>まだこの授業を探している人はいないようです</p>
 {% else %}
 <p>{{ list_count }}件見つかりました。</p>
-{% for search in searchList %}
+{% for recruit in recruitList %}
 <div class="search-box">
     <div class="search-username">
-        <a class="target_user" href="{% url 'accounts:profile' search.user.id search.id %}">
-            {{ search.user.username }}
-        </a>
+        <h2>{{ recruit.user.username }}さんの募集</h2>
     </div>
     <div class="search-profile-text">
-        <p>{{ search.user.profile.profile_text }}</p>
-    </div>
-    <div class="other-funcs">
-        {% if search.room %}
-        <a href="{% url 'dm:joinRoom' search.id this_search.id %}">トークルームに加わる</a>
-        {% else %}
-        <a href="{% url 'dm:createRoom' search.id this_search.id %}">トークルームを作成</a>
+        {% if recruit.room.introduction != None %}
+        <p>{{ recruit.room.introduction }}</p>
         {% endif %}
+    </div>
+
+    <div class="members-dropdown">
+        <a type="button" data-bs-toggle="collapse" data-bs-target="#recruit_{{ recruit.pk }}" aria-expanded="false"
+            aria-controls="recruit_{{ recruit.pk }}">
+            メンバーを表示
+        </a>
+        {% if recruit.room.members.all %}
+        <div class="collapse members_box" id="recruit_{{ recruit.pk}}">
+            {% for member in recruit.room.members.all %}
+            <a href="{% url 'accounts:profile' member.id this_search.id %}">
+                {{ member.username }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="other-funcs d-flex justify-content-end">
+        <a href="{% url 'dm:joinRoom' recruit.id this_search.id %}">
+            <button class="btn btn-unienca btn-join">
+                参加
+            </button>
+        </a>
     </div>
 </div>
 {% endfor %}
 {% endif %}
 <div class="d-flex justify-content-center">
-    <a href="{% url 'matching:deleteSearch' this_search.pk %}">
-        <button class="btn btn-unienca btn-delete float-">
-            募集を削除する
-        </button>
-    </a>
-</div>
-<div class="d-flex justify-content-center">
-    <a href="{% url 'matching:home' %}">
-        <button class="btn btn-unienca btn-continue float-end">
-            このまま募集した状態にする
+    <a href="{% url 'matching:delete' this_search.favor.id %}">
+        <button class="btn btn-unienca btn-delete float-end">
+            戻る
         </button>
     </a>
 </div>

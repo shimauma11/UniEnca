@@ -8,6 +8,7 @@
     <h1>トークルームの最大人数を教えてください</h1>
     <form method="POST">
         {% csrf_token %}
+        <p>ルームの名前 {{ form.name }}</p>
         <p>最大人数 {{ form.max_num }}</p>
         <button type="submit" class="btn btn-unienca btn-next float-end">
             作成
