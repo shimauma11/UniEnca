@@ -124,11 +124,19 @@ class TestCreateFavorView(TestCase):
         data = {
             "gender": 0,
             "grade": 1,
-            "age": 20,
-            "user": self.user01, 
+            "age": "upper",
         }
         response = self.client.post(self.url, data)
-        self.assertEqual(Favor.objects.count(), 1)
+        self.assertRedirects(
+            response,
+            reverse(
+                "matching:createRecruit",
+                kwargs={"lesson_id": self.lesson.id, "favor_id": 1},
+            ),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertTrue(Favor.objects.exists())
 
 
 class TestCreateSearchView(TestCase):
@@ -159,16 +167,16 @@ class TestCreateSearchView(TestCase):
 
     def test_success_get(self):
         response = self.client.get(self.url)
-        search = get_object_or_404(Search, lesson=self.lesson, favor=self.favor)
+        search = get_object_or_404(
+            Search, lesson=self.lesson, favor=self.favor
+        )
         self.assertRedirects(
             response,
             reverse("matching:search", kwargs={"search_id": search.id}),
             status_code=302,
             target_status_code=200,
         )
-        
 
-        
 
 """
 class TestSearchView(TestCase):

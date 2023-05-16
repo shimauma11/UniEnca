@@ -1,12 +1,10 @@
-from typing import Optional
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.views import View
 from django.views.generic import TemplateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.http import HttpResponseRedirect, HttpResponseForbidden
 
 from accounts.models import Lesson
 from .models import Favor, Search, Recruit
@@ -80,7 +78,6 @@ class CreateFavorView(View, LoginRequiredMixin):
         user = self.request.user
         form = self.form_class(request.POST)
         if form.is_valid():
-            favor = form.save(commit=False)
             # すでに同じfavorがあるかどうかをチェックするための情報
             gender = form.cleaned_data["gender"]
             grade = form.cleaned_data["grade"]
@@ -94,6 +91,8 @@ class CreateFavorView(View, LoginRequiredMixin):
                 age=age,
                 target=target,
             )
+            favor.save()
+
             favor_id = favor.id
             if path == "search":
                 url = reverse(

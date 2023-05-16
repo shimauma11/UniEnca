@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from accounts.models import Lesson
 from accounts.models_sub import Target
 from .models_sub import Gender, Grade
