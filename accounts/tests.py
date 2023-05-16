@@ -223,7 +223,8 @@ class TestProfileTextEditView(TestCase):
         )
         self.client.login(username="testuser01", password="testuserpassword01")
         self.url = reverse(
-            "accounts:profileTextEdit", kwargs={"profile_id": self.profile01.id}
+            "accounts:profileTextEdit",
+            kwargs={"profile_id": self.profile01.id},
         )
 
     def test_success_get(self):
@@ -231,12 +232,10 @@ class TestProfileTextEditView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_success_post(self):
-        data = {
-            "profile_text": "newprofiletext"
-        }
+        data = {"profile_text": "newprofiletext"}
         response = self.client.post(self.url, data)
         self.assertRedirects(
-            response, 
+            response,
             reverse("accounts:myProfile"),
             status_code=302,
             target_status_code=200,

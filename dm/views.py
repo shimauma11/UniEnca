@@ -1,11 +1,9 @@
-from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic import TemplateView
-from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from .forms import MessageSendForm, RoomEditForm
 from matching.models import Search, Recruit
@@ -52,8 +50,6 @@ class DMListView(TemplateView, LoginRequiredMixin):
 
 
 class JoinRoomView(View, LoginRequiredMixin):
-    template_name = "dm/temp.html"
-
     def get(self, request, recruit_id, search_id):
         user = self.request.user
         recruit = get_object_or_404(Recruit, pk=recruit_id)

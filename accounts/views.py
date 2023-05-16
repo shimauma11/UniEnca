@@ -5,7 +5,7 @@ from django.views.generic import CreateView as UserCreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.conf import settings
 
 from .models import Profile, Hobby
